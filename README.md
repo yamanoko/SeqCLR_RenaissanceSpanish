@@ -27,4 +27,6 @@ The model's training process is as follows:
 ## Result
 
 After 8 epochs of Contrastive Learning and 20 epochs of semi-supervised learning, the model achieved a CER of under 0.1% for the Validation dataset. However, the performance on the test dataset was inadequate, as evidenced in the final tests conducted in `encoder_training.ipynb`. Despite generating some parts of text lines correctly, the model's overall performance was lacking. I anticipate that I could address these issues through my GSoC project by exploring several solutions, such as changing the architecture (e.g., replacing the Decoder with a Transformer Decoder, making the Encoder deeper), increasing the dataset size, and optimizing the data transformation process in Contrastive Learning, pending acceptance by HumanAI.
-
+![スクリーンショット 2024-03-27 224608](https://github.com/yamanoko/SeqCLR_RenaissanceSpanish/assets/81514427/d47d973f-e774-4b75-9ef8-9ce84b02c939)
+![スクリーンショット 2024-03-27 224623](https://github.com/yamanoko/SeqCLR_RenaissanceSpanish/assets/81514427/54e8fa71-eeb5-486d-98a2-00dbbab97e7a)
+![スクリーンショット 2024-03-27 224646](https://github.com/yamanoko/SeqCLR_RenaissanceSpanish/assets/81514427/f2c21b5c-9ba7-489f-85f8-81e6bed0643c)
