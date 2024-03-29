@@ -4,7 +4,7 @@ This project was developed to test the capabilities of the HumanAI Foundation's 
 
 ## Architecture
 
-The model was implemented with reference to SeqCLR (Aberdam, A., et al., [2020](https://arxiv.org/abs/2012.10873)). According to the paper, SeqCLR employs a Contrastive Learning method, wherein its encoder learns to become robust against certain image transformations. Although the original paper proposes this method for sub-word level text detection, I hypothesized that it could be effectively adapted for line-level detection by optimizing the encoder's output (i.e., frame sequences) to represent each character within a line accurately.
+The model was implemented with reference to SeqCLR (Aberdam, A., et al., [2021](https://arxiv.org/abs/2012.10873)). According to the paper, SeqCLR employs a Contrastive Learning method, wherein its encoder learns to become robust against certain image transformations. Although the original paper proposes this method for sub-word level text detection, I hypothesized that it could be effectively adapted for line-level detection by optimizing the encoder's output (i.e., frame sequences) to represent each character within a line accurately.
 
 I chose SeqCLR as the architecture for this test because it is a pioneering self-supervised learning model for OCR. It is relatively straightforward to understand and serves as an excellent starting point for this GSoC project, which aims to build a self-supervised model with an accuracy of above 80%.
 
