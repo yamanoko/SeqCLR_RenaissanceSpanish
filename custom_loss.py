@@ -12,7 +12,8 @@ def cosine_similarity(x, y):
 def noise_contrastive_estimation(x, y):
     sim_output = cosine_similarity(x, y)
     cross_entropy = CrossEntropyLoss(reduction='sum')
-    return cross_entropy(sim_output, torch.arange(sim_output.shape[0]).to(sim_output.device))
+    loss = cross_entropy(sim_output, torch.arange(sim_output.shape[0]) / torch.sqrt(sim_output.shape[0]))
+    return loss.to(x.device)
 
 
 def contrastive_loss(x, y):

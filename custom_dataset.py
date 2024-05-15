@@ -41,8 +41,8 @@ class ContrastiveLearningDataset(Dataset):
             Lambda(lambda img: img.convert("RGB")),
             RandomApply([RandomVerticalCrop(crop_height=crop_height)], p=0.5),
             RandomApply([GaussianBlur(kernel_size=5, sigma=(0.1, 2.0))], p=0.5),
-            RandomApply([RandomPerspective(distortion_scale=0.1)], p=0.5),
-            RandomApply([RandomAffine(degrees=5)], p=0.5),
+            RandomApply([RandomPerspective(distortion_scale=0.1)], p=0.3),
+            RandomApply([RandomAffine(degrees=15)], p=0.3),
             Resize(self.img_size),
             ToTensor(),
         ])
@@ -72,8 +72,6 @@ class DecoderDataset(Dataset):
         self.transform = transforms.Compose([
             transforms.Lambda(lambda img: img.convert("RGB")),  # Added this to convert images to RGB format
             transforms.Resize((50, 700)),
-
-
             transforms.ToTensor(),  # Convert image to PyTorch Tensor in CHW format
             *([transform] if transform else [])
         ])
