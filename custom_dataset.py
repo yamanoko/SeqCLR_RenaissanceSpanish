@@ -2,7 +2,7 @@ import pandas as pd
 import torch
 from torchvision import transforms
 from torchvision.transforms import RandomApply, GaussianBlur, Resize, Compose, ToTensor, Lambda, RandomPerspective, \
-    RandomAffine
+    RandomAffine, ColorJitter
 from PIL import Image
 import os
 import numpy as np
@@ -39,10 +39,11 @@ class ContrastiveLearningDataset(Dataset):
         ])
         self.augmented_transform = Compose([
             Lambda(lambda img: img.convert("RGB")),
+            RandomApply([ColorJitter(brightness=.3, hue=.1, contrast=.3)], p=0.5),
             RandomApply([RandomVerticalCrop(crop_height=crop_height)], p=0.5),
             RandomApply([GaussianBlur(kernel_size=5, sigma=(0.1, 2.0))], p=0.5),
-            RandomApply([RandomPerspective(distortion_scale=0.1)], p=0.5),
-            RandomApply([RandomAffine(degrees=5)], p=0.5),
+            RandomApply([RandomPerspective(distortion_scale=0.1)], p=0.3),
+            RandomApply([RandomAffine(degrees=15)], p=0.3),
             Resize(self.img_size),
             ToTensor(),
         ])
@@ -72,8 +73,6 @@ class DecoderDataset(Dataset):
         self.transform = transforms.Compose([
             transforms.Lambda(lambda img: img.convert("RGB")),  # Added this to convert images to RGB format
             transforms.Resize((50, 700)),
-
-
             transforms.ToTensor(),  # Convert image to PyTorch Tensor in CHW format
             *([transform] if transform else [])
         ])
