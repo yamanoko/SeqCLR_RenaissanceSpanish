@@ -40,7 +40,7 @@ class ResNet18(nn.Module):
         super(ResNet18, self).__init__()
         self.in_channels = 64
 
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
@@ -84,7 +84,7 @@ class ResNet34(nn.Module):
         super(ResNet34, self).__init__()
         self.in_channels = 64
 
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
@@ -93,7 +93,7 @@ class ResNet34(nn.Module):
         self.layer3 = self._make_layer(BasicBlock, 256, 6, stride=2)
         self.layer4 = self._make_layer(BasicBlock, 512, 3, stride=1)
 
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 44))
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 10))
 
     def _make_layer(self, block, out_channels, num_blocks, stride):
         strides = [stride] + [1] * (num_blocks - 1)
