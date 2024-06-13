@@ -51,13 +51,13 @@ def resize_and_pad(img, target_size):
     pad_left, pad_right = pad_horz // 2, pad_horz - (pad_horz // 2)
 
     # Apply the padding
-    resized_img = F.pad(resized_img, (pad_left, pad_top, pad_right, pad_bot))
+    resized_img = F.pad(resized_img, (pad_left, pad_top, pad_right, pad_bot), fill=255)
 
     return resized_img
 
 
 class ContrastiveLearningDataset(Dataset):
-    def __init__(self, image_dir, crop_height_ratio=0.1, img_size=(32, 100)):
+    def __init__(self, image_dir, crop_height_ratio=0.2, img_size=(32, 100)):
         super().__init__()
         self.img_size = img_size
         assert os.path.isdir(image_dir)
@@ -68,12 +68,12 @@ class ContrastiveLearningDataset(Dataset):
         if not self.filepaths:
             raise ValueError(f"No image files found in {image_dir}")
         self.original_transform = Compose([
-            # Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
+            Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
             Resize(img_size),
             ToTensor(),
         ])
         self.augmented_transform = Compose([
-            # RandomApply([RandomVerticalCrop(crop_height_ratio=crop_height_ratio)], p=0.5),
+            RandomApply([RandomVerticalCrop(crop_height_ratio=crop_height_ratio)], p=0.5),
             RandomApply([GaussianBlur(kernel_size=5, sigma=(0.1, 2.0))], p=0.5),
             RandomApply([RandomPerspective(distortion_scale=0.1)], p=0.3),
             RandomApply([RandomAffine(degrees=10)], p=0.3),
@@ -96,28 +96,29 @@ class ContrastiveLearningDataset(Dataset):
 
 
 class DecoderDataset(Dataset):
-    def __init__(self, csv_file, img_dir, token_dict, max_size=10000, max_length=50, transform=None):
+    def __init__(self, csv_file, img_dir, token_dict, img_size=(32, 100), max_length=15, transform=None):
         self.img_dir = img_dir
         self.annotations = pd.read_csv(csv_file, index_col=0)
         self.token_dict = token_dict
-        self.max_size = max_size
         self.max_length = max_length
         self.transform = transforms.Compose([
-            transforms.Lambda(lambda img: img.convert("RGB")),  # Added this to convert images to RGB format
-            transforms.Resize((50, 700)),
-            transforms.ToTensor(),  # Convert image to PyTorch Tensor in CHW format
+            Lambda(lambda img: img.convert("L")),  # Convert image to grayscale
+            Lambda(lambda img: img.point(lambda p: p > 128 and 255)),  # Binarize the image
+            Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
+            Resize(img_size),
+            ToTensor(),  # Convert image to PyTorch Tensor in CHW format
             *([transform] if transform else [])
         ])
 
     def __len__(self):
-        return min(len(self.annotations), self.max_size)
+        return len(self.annotations)
 
     def __getitem__(self, index):
-        img_name = self.annotations.iloc[-(index+1), 1]
+        img_name = self.annotations.iloc[index, 1]
         image = Image.open(os.path.join(self.img_dir, img_name))  # Use PIL to read the image
         image = self.transform(image)  # Image is in CHW format now
 
-        label = self.annotations.iloc[-(index+1), 0]
+        label = self.annotations.iloc[index, 0]
         label_tokenized = [
             self.token_dict[char.lower()] if char.lower() in self.token_dict
             else self.token_dict["<UNK>"] for char in label]
