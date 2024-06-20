@@ -57,7 +57,7 @@ def resize_and_pad(img, target_size):
 
 
 class ContrastiveLearningDataset(Dataset):
-    def __init__(self, image_dir, crop_height_ratio=0.2, img_size=(32, 100)):
+    def __init__(self, image_dir, crop_height_ratio=0.2, img_size=(50, 700)):
         super().__init__()
         self.img_size = img_size
         assert os.path.isdir(image_dir)
@@ -68,16 +68,22 @@ class ContrastiveLearningDataset(Dataset):
         if not self.filepaths:
             raise ValueError(f"No image files found in {image_dir}")
         self.original_transform = Compose([
+            Lambda(lambda img: img.convert("RGB")),
+            # Lambda(lambda img: img.convert("L")),  # Convert image to grayscale
+            # Lambda(lambda img: img.point(lambda p: p > 128 and 255)),  # Binarize the image
             Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
             Resize(img_size),
             ToTensor(),
         ])
         self.augmented_transform = Compose([
+            Lambda(lambda img: img.convert("RGB")),
+            # Lambda(lambda img: img.convert("L")),  # Convert image to grayscale
+            # Lambda(lambda img: img.point(lambda p: p > 128 and 255)),  # Binarize the image
             RandomApply([RandomVerticalCrop(crop_height_ratio=crop_height_ratio)], p=0.5),
             RandomApply([GaussianBlur(kernel_size=5, sigma=(0.1, 2.0))], p=0.5),
             RandomApply([RandomPerspective(distortion_scale=0.1)], p=0.3),
             RandomApply([RandomAffine(degrees=10)], p=0.3),
-            Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
+            # Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
             Resize(img_size),
             ToTensor(),
         ])
@@ -87,7 +93,7 @@ class ContrastiveLearningDataset(Dataset):
 
     def __getitem__(self, idx):
         try:
-            img = Image.open(self.filepaths[idx]).convert("L")
+            img = Image.open(self.filepaths[idx])
         except IOError:
             return "cannot identify image file '%s'", self.filepaths[idx]
         original = self.original_transform(img)
@@ -96,15 +102,16 @@ class ContrastiveLearningDataset(Dataset):
 
 
 class DecoderDataset(Dataset):
-    def __init__(self, csv_file, img_dir, token_dict, img_size=(32, 100), max_length=15, transform=None):
+    def __init__(self, csv_file, img_dir, token_dict, img_size=(50, 700), max_length=50, transform=None):
         self.img_dir = img_dir
         self.annotations = pd.read_csv(csv_file, index_col=0)
         self.token_dict = token_dict
         self.max_length = max_length
         self.transform = transforms.Compose([
-            Lambda(lambda img: img.convert("L")),  # Convert image to grayscale
-            Lambda(lambda img: img.point(lambda p: p > 128 and 255)),  # Binarize the image
-            Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
+            # Lambda(lambda img: img.convert("L")),  # Convert image to grayscale
+            # Lambda(lambda img: img.point(lambda p: p > 128 and 255)),  # Binarize the image
+            Lambda(lambda img: img.convert("RGB")),
+            # Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
             Resize(img_size),
             ToTensor(),  # Convert image to PyTorch Tensor in CHW format
             *([transform] if transform else [])

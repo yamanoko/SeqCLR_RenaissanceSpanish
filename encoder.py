@@ -1,13 +1,13 @@
 import torch
 from torch import nn
-from ResNet import ResNet18, ResNet34
+from ResNet import ResNet18, ResNet34, ResNet50
 
 
 class Encoder(nn.Module):
     def __init__(self):
         super(Encoder, self).__init__()
         # self.resnet = ResNet18()
-        self.resnet = ResNet34()
+        self.resnet = ResNet50()
         self.lstm = nn.LSTM(input_size=512, hidden_size=256, num_layers=2, batch_first=True, bidirectional=True)
 
     def forward(self, x):

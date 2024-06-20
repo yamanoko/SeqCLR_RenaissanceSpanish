@@ -56,6 +56,6 @@ class LSTMAttnDecoder(nn.Module):
         # output: (batch_size, hidden_size) if seq_length=1
         output = self.out(torch.cat((output, context), 1))
         # output: (batch_size, output_size)
-        # output = F.log_softmax(output, dim=1)
+        output = F.log_softmax(output, dim=1)
         # output: (batch_size, output_size)
         return output, hidden
