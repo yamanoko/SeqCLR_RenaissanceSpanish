@@ -1,11 +1,8 @@
 {
     "SSL": {
         "dataset 1": null,
-        "dataset 1 csv": null,
         "dataset 2": null,
-        "dataset 2 csv": null,
         "dataset 3": null,
-        "dataset 3 csv": null,
         "epoch size": 1,
         "Batch size": 16,
         "start lr": 0.01,
