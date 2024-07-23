@@ -3,7 +3,7 @@ import torch
 from torchvision import transforms
 from torchvision.transforms import functional as F
 from torchvision.transforms import RandomApply, GaussianBlur, Resize, Compose, ToTensor, Lambda, RandomPerspective, \
-    RandomAffine
+    RandomAffine, ColorJitter, Grayscale
 from PIL import Image
 import os
 import numpy as np
@@ -57,7 +57,7 @@ def resize_and_pad(img, target_size):
 
 
 class ContrastiveLearningDataset(Dataset):
-    def __init__(self, image_dir, crop_height_ratio=0.2, img_size=(50, 700)):
+    def __init__(self, image_dir, crop_height_ratio=0.2, img_size=(32, 100)):
         super().__init__()
         self.img_size = img_size
         assert os.path.isdir(image_dir)
@@ -69,21 +69,16 @@ class ContrastiveLearningDataset(Dataset):
             raise ValueError(f"No image files found in {image_dir}")
         self.original_transform = Compose([
             Lambda(lambda img: img.convert("RGB")),
-            # Lambda(lambda img: img.convert("L")),  # Convert image to grayscale
-            # Lambda(lambda img: img.point(lambda p: p > 128 and 255)),  # Binarize the image
             Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
             Resize(img_size),
             ToTensor(),
         ])
         self.augmented_transform = Compose([
             Lambda(lambda img: img.convert("RGB")),
-            # Lambda(lambda img: img.convert("L")),  # Convert image to grayscale
-            # Lambda(lambda img: img.point(lambda p: p > 128 and 255)),  # Binarize the image
             RandomApply([RandomVerticalCrop(crop_height_ratio=crop_height_ratio)], p=0.5),
-            RandomApply([GaussianBlur(kernel_size=5, sigma=(0.1, 2.0))], p=0.5),
-            RandomApply([RandomPerspective(distortion_scale=0.1)], p=0.3),
-            RandomApply([RandomAffine(degrees=10)], p=0.3),
-            # Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
+            RandomApply([GaussianBlur(kernel_size=3)], p=0.3),
+			RandomApply([RandomAffine(degrees=3.5, translate=(0.05, 0.05), shear=15)], p=0.4),
+			Grayscale(num_output_channels=3),
             Resize(img_size),
             ToTensor(),
         ])
@@ -102,16 +97,17 @@ class ContrastiveLearningDataset(Dataset):
 
 
 class DecoderDataset(Dataset):
-    def __init__(self, csv_file, img_dir, token_dict, img_size=(50, 700), max_length=50, transform=None):
+    def __init__(self, csv_file, img_dir, token_dict, img_size=(32, 384), max_length=20, transform=None):
         self.img_dir = img_dir
-        self.annotations = pd.read_csv(csv_file, index_col=0)
+        self.annotations = pd.read_csv(csv_file)
         self.token_dict = token_dict
         self.max_length = max_length
         self.transform = transforms.Compose([
-            # Lambda(lambda img: img.convert("L")),  # Convert image to grayscale
-            # Lambda(lambda img: img.point(lambda p: p > 128 and 255)),  # Binarize the image
             Lambda(lambda img: img.convert("RGB")),
             # Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
+            RandomApply([GaussianBlur(kernel_size=3)], p=0.3),
+			RandomApply([RandomAffine(degrees=3.5, translate=(0.05, 0.05), shear=15)], p=0.4),
+			Grayscale(num_output_channels=3),
             Resize(img_size),
             ToTensor(),  # Convert image to PyTorch Tensor in CHW format
             *([transform] if transform else [])
