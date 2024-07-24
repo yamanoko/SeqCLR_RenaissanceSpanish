@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from huggingface_hub import PyTorchModelHubMixin
 
 class Attention(nn.Module):
     def __init__(self, hidden_size):
@@ -21,7 +22,7 @@ class Attention(nn.Module):
         # weighted_sum: (batch_size, 1, hidden_size)
         return weighted_sum
 
-class LSTMAttnDecoder(nn.Module):
+class LSTMAttnDecoder(nn.Module, PyTorchModelHubMixin):
     def __init__(self, hidden_size, output_size, dropout=0.1):
         super(LSTMAttnDecoder, self).__init__()
         self.hidden_size = hidden_size

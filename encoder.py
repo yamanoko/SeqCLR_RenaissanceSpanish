@@ -1,9 +1,10 @@
 import torch
 from torch import nn
+from huggingface_hub import PyTorchModelHubMixin
 from ResNet import ResNet18, ResNet34, ResNet50
 
 
-class Encoder(nn.Module):
+class Encoder(nn.Module, PyTorchModelHubMixin):
     def __init__(self):
         super(Encoder, self).__init__()
         # self.resnet = ResNet18()

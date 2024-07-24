@@ -3,7 +3,7 @@ import torch
 from torchvision import transforms
 from torchvision.transforms import functional as F
 from torchvision.transforms import RandomApply, GaussianBlur, Resize, Compose, ToTensor, Lambda, RandomPerspective, \
-    RandomAffine, ColorJitter, Grayscale
+    RandomAffine, RandomRotation, Grayscale
 from PIL import Image
 import os
 import numpy as np
@@ -57,19 +57,19 @@ def resize_and_pad(img, target_size):
 
 
 class ContrastiveLearningDataset(Dataset):
-    def __init__(self, image_dir, crop_height_ratio=0.2, img_size=(32, 100)):
+    def __init__(self, img_dir, crop_height_ratio=0.2, img_size=(64, 384)):
         super().__init__()
         self.img_size = img_size
-        assert os.path.isdir(image_dir)
+        assert os.path.isdir(img_dir)
         self.filepaths = [
-            os.path.join(image_dir, filename) for filename in os.listdir(image_dir)
-            if os.path.isfile(os.path.join(image_dir, filename))
+            os.path.join(img_dir, filename) for filename in os.listdir(img_dir)
+            if os.path.isfile(os.path.join(img_dir, filename))
         ]
         if not self.filepaths:
-            raise ValueError(f"No image files found in {image_dir}")
+            raise ValueError(f"No image files found in {img_dir}")
         self.original_transform = Compose([
             Lambda(lambda img: img.convert("RGB")),
-            Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
+            Grayscale(num_output_channels=3),
             Resize(img_size),
             ToTensor(),
         ])
@@ -97,7 +97,7 @@ class ContrastiveLearningDataset(Dataset):
 
 
 class DecoderDataset(Dataset):
-    def __init__(self, csv_file, img_dir, token_dict, img_size=(32, 384), max_length=20, transform=None):
+    def __init__(self, csv_file, img_dir, token_dict, img_size=(64, 384), max_length=20, transform=None):
         self.img_dir = img_dir
         self.annotations = pd.read_csv(csv_file)
         self.token_dict = token_dict
@@ -106,7 +106,8 @@ class DecoderDataset(Dataset):
             Lambda(lambda img: img.convert("RGB")),
             # Lambda(lambda img: resize_and_pad(img=img, target_size=img_size)),
             RandomApply([GaussianBlur(kernel_size=3)], p=0.3),
-			RandomApply([RandomAffine(degrees=3.5, translate=(0.05, 0.05), shear=15)], p=0.4),
+			# RandomApply([RandomAffine(degrees=3.5, translate=(0.05, 0.05), shear=15)], p=0.4),
+			RandomRotation(degrees=3.5, fill=255),
 			Grayscale(num_output_channels=3),
             Resize(img_size),
             ToTensor(),  # Convert image to PyTorch Tensor in CHW format
