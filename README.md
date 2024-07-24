@@ -1,6 +1,5 @@
 # Project for HumanAI Foundation: Self-Supervised Learning for Text Recognition in Early Modern Spanish Documents
-
-This project was developed to test the capabilities of the HumanAI Foundation's framework. It features a model designed using self-supervised learning methods to recognize text in early modern Spanish documents.
+It features a model designed using self-supervised learning methods to recognize text in early modern Spanish documents.
 
 ## Architecture
 
