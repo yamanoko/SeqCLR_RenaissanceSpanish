@@ -1,7 +1,7 @@
 # Spanish Historical OCR using Self-Supervised Learning
 
 ## Overview
-This repository implements a word-level OCR model for Renaissance Spanish documents using Self-Supervised Learning. The model was developed with reference to SeqCLR ([Aberdam A., et al., 2021](https://arxiv.org/abs/2012.10873)). According to the paper, SeqCLR employs a Contrastive Learning method, wherein its encoder learns to become robust against certain image transformations. The architecture includes a combination of ResNet50 and a 2-layer BiLSTM as the Encoder, and an Attention LSTM Decoder. At this point, the model achieves 0.1% CER. This model can be tested in `test_model.ipynb`. For further information, please refer to my [blog](https://medium.com/@yamanko1234/developing-self-supervised-models-for-historical-ocr-challenges-and-achievements-as-a-google-e48f89feb488).
+This repository implements a word-level OCR model for Renaissance Spanish documents using Self-Supervised Learning. The model was developed with reference to SeqCLR ([Aberdam A., et al., 2021](https://arxiv.org/abs/2012.10873)). According to the paper, SeqCLR employs a Contrastive Learning method, wherein its encoder learns to become robust against certain image transformations. The architecture includes a combination of ResNet50 and a 2-layer BiLSTM as the Encoder, and an Attention LSTM Decoder. At this point, the model achieves 0.1% CER. This model can be tested in `test_model.ipynb`. For further information, please refer to my [blog](https://medium.com/@yamanko1234/historical-ocr-with-self-supervised-learning-c4f00da6637f).
 
 ## File/Folder Descriptions
 - **Tokenizer**: A folder containing Tokenizer pickle files for the Decoder training.
