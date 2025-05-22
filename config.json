@@ -3,34 +3,34 @@
         "ViT": false
     },
     "SSL": {
-        "dataset 1": "/home/yukinori/Desktop/CRAFT-pytorch/self_supervised_data/word_images",
+        "dataset 1": "/home/yukinori/Desktop/CRAFT-pytorch/trdg_dataset/Garamond",
         "dataset 2": null,
         "dataset 3": null,
         "epoch size": 1,
         "Batch size": 32,
         "start lr": 0.001,
-        "lr scheduler step size": 2,
-        "saved Encoder path": "ViT_encoder.pth"
+        "lr scheduler step size": 15000,
+        "saved Encoder path": "models/pretrained_encoder_with_STD_1_14.pt"
     },
     "fine-tuning": {
-        "dataset 1": "/home/yukinori/Desktop/CRAFT-pytorch/Perfecto/Perfecto/word_images",
-        "dataset 1 csv": "/home/yukinori/Desktop/CRAFT-pytorch/Perfecto/Perfecto/word_images.csv",
-        "dataset 2": "/home/yukinori/Desktop/CRAFT-pytorch/Ezcaray/word_images",
-        "dataset 2 csv": "/home/yukinori/Desktop/CRAFT-pytorch/Ezcaray/word_images.csv",
-        "dataset 3": "/home/yukinori/Desktop/CRAFT-pytorch/Virtuosa/word_images",
-        "dataset 3 csv": "/home/yukinori/Desktop/CRAFT-pytorch/Virtuosa/word_images.csv",
+        "dataset 1": "/home/yukinori/Desktop/CRAFT-pytorch/trdg_dataset/Garamond",
+        "dataset 1 csv": "/home/yukinori/Desktop/CRAFT-pytorch/trdg_dataset/Garamond_images.csv",
+        "dataset 2": null,
+        "dataset 2 csv": null,
+        "dataset 3": null,
+        "dataset 3 csv": null,
         "test dataset": "/home/yukinori/Desktop/CRAFT-pytorch/self_supervised_data/word_images",
-        "fine-tune on other dataset": true,
-        "Encoder path for fine-tuning": "models/trdg_Encoder_9_13.pt",
-        "Decoder path for fine-tuning": "models/trdg_Decoder_9_13.pt",
+        "fine-tune on other dataset": false,
+        "Encoder path for fine-tuning": "Results_pickle/STD+ARD/STD_ARD_Encoder_11_16_1.pt",
+        "Decoder path for fine-tuning": "Results_pickle/STD+ARD/STD_ARD_Decoder_11_16_1.pt",
         "Freeze Encoder": false,
-        "epoch size": 30,
+        "epoch size": 1,
         "Batch size": 32,
         "start lr": 0.0001,
         "lr scheduler step size": 20,
         "char to token": "Tokenizer/char_to_token.pkl",
         "token to char": "Tokenizer/token_to_char.pkl",
-        "saved Encoder path": "models/trdg_fine_tuned_Encoder_withoutSSL_9_13.pt",
-        "saved Decoder path": "models/trdg_fine_tuned_Decoder_withoutSSL_9_13.pt"
+        "saved Encoder path": "Results_pickle/Pretrained_with_STD/SSL+STD/SSL_STD_Encoder_1_14.pt",
+        "saved Decoder path": "Results_pickle/Pretrained_with_STD/SSL+STD/SSL_STD_Decoder_1_14.pt"
     }
 }
